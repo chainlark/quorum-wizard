@@ -46,6 +46,7 @@
     "axios": "^0.21.1",
     "ethers": "^5.0.7",
     "fs-extra": "^9.0.0",
+    "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.0.0",
     "ip-address": "^6.3.0",
     "is-wsl": "^2.2.0",
