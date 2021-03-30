@@ -3,6 +3,10 @@ import axios from 'axios'
 import { createGunzip } from 'zlib'
 import { extract } from 'tar-fs'
 import { createWriteStream } from 'fs'
+
+import { HttpsProxyAgent } from 'https-proxy-agent';
+
+
 import {
   createFolder,
   exists,
@@ -22,13 +26,22 @@ export async function downloadIfMissing(name, version) {
   if (!exists(binaryFileLocation)) {
     createFolder(binDir, true)
     const url = getPlatformSpecificUrl(binaryInfo)
+    let httpsAgent = false;
+    const proxyUrl = process.env.HTTPS_PROXY;
+    if (proxyUrl != undefined && proxyUrl !== "" ) {
+      info(`use https.proxy: ${proxyUrl}`)
+      httpsAgent =  new HttpsProxyAgent(proxyUrl);
+    }
 
     info(`Downloading ${name} ${version} from ${url}...`)
     const response = await axios({
       url,
       method: 'GET',
       responseType: 'stream',
+      proxy: false,
+      httpsAgent: httpsAgent
     })
+    
 
     info(`Unpacking to ${binaryFileLocation}`)
     if (binaryInfo.type === 'tar.gz') {
